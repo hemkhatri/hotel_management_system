@@ -7,7 +7,7 @@ from services.models import Order  # Import Order from services app
 class BookingRoomInline(admin.TabularInline):
     model = BookingRoom
     extra = 0
-    readonly_fields = ("subtotal", "created_at")
+    readonly_fields = ("subtotal", "created_at", 'price_per_night')  # Added 'price_per_night' to readonly_fields
     fields = ("room", "price_per_night", "number_of_nights", "subtotal")
 
 
@@ -62,8 +62,8 @@ class BookingAdmin(admin.ModelAdmin):
                 "fields": (
                     "status",
                     "booking_source",
-                    ("check_in_status", "check_in"),
-                    ("check_out_status", "check_out"),
+                    ("check_in"),
+                    ("check_out"),
                 )
             },
         ),
