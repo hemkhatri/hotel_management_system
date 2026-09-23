@@ -86,3 +86,7 @@ ehthumbs_vista.db
 *.njsproj
 *.sln
 *.sw?
+
+
+# self
+audit/

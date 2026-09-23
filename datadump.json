@@ -1,0 +1,351 @@
+[
+    {
+        "model": "sessions.session",
+        "pk": "h7fg8ngmmsvt74pygezfl2ch3yon3t5s",
+        "fields": {
+            "session_data": ".eJxVjLsOgzAMAP_FcxXh2JCasTvfEDkPCm0VJAJT1X-vkBja9e50b_C6b5Pfa179nKAHhMsvCxqfuRwiPbTcFxOXsq1zMEdiTlvNsKT8up3t32DSOkEPjrRjhyzEAUUp5pY5shsdoQ0Nil5bGyg05NCSJByxE5ewizxKKwKfL6vNNlo:1x8tyQ:zdTd9AGTVb5yNKQxpSy5EG4na-p8yTLfI03URaKN1a0",
+            "expire_date": "2026-10-06T06:27:26.255Z"
+        }
+    },
+    {
+        "model": "accounts.user",
+        "fields": {
+            "password": "pbkdf2_sha256$1500000$J382neaihRYCyuJQz4iKgX$BL104CDsDLJuJqTiriYAOsEYmS1wy05mG9iWNvkdODc=",
+            "last_login": "2026-09-22T06:27:26.220Z",
+            "is_superuser": true,
+            "username": "msi",
+            "first_name": "",
+            "last_name": "",
+            "email": "",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2026-09-22T06:27:12.008Z",
+            "phone_number": null,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "bookings.booking",
+        "pk": 1,
+        "fields": {
+            "customer_id": [
+                "msi"
+            ],
+            "hotel": 1,
+            "check_in_status": false,
+            "check_in": "2026-09-22T08:07:52Z",
+            "check_out_status": false,
+            "check_out": "2026-09-22T08:07:55Z",
+            "number_of_guests": 2,
+            "status": "Confirmed",
+            "booking_source": "Online",
+            "special_requests": "",
+            "subtotal": "1500.00",
+            "discount": "20.00",
+            "tax": "100.00",
+            "total": "1580.00",
+            "created_at": "2026-09-22T08:07:56.531Z",
+            "updated_at": "2026-09-22T08:19:29.446Z"
+        }
+    },
+    {
+        "model": "bookings.bookingroom",
+        "pk": 1,
+        "fields": {
+            "booking": 1,
+            "room": 1,
+            "price_per_night": "1200.00",
+            "number_of_nights": 1,
+            "subtotal": "1200.00",
+            "created_at": "2026-09-22T08:11:13.455Z"
+        }
+    },
+    {
+        "model": "hotels.hotel",
+        "pk": 1,
+        "fields": {
+            "name": "Kalika",
+            "address": "Itahari",
+            "phone": "9800000000",
+            "email": "kalikahotel@gmail.co",
+            "description": "This is kalika hotel",
+            "created_at": "2026-09-22T07:58:46.170Z",
+            "updated_at": "2026-09-22T07:58:46.170Z"
+        }
+    },
+    {
+        "model": "hotels.roomcategory",
+        "pk": 1,
+        "fields": {
+            "name": "Normal",
+            "description": "This is normal room",
+            "base_price": "1200.00",
+            "max_occupancy": 3,
+            "status": "Active",
+            "created_at": "2026-09-22T07:56:10.847Z",
+            "updated_at": "2026-09-22T07:56:10.847Z",
+            "amenities": []
+        }
+    },
+    {
+        "model": "rooms.room",
+        "pk": 1,
+        "fields": {
+            "category": 1,
+            "room_number": "10D",
+            "floor": 1,
+            "description": "",
+            "status": "Available",
+            "created_at": "2026-09-22T07:56:31.065Z",
+            "updated_at": "2026-09-22T07:56:31.065Z"
+        }
+    },
+    {
+        "model": "services.order",
+        "pk": 1,
+        "fields": {
+            "booking": 1,
+            "status": "Accepted",
+            "subtotal": "300.00",
+            "created_at": "2026-09-22T08:19:29.441Z",
+            "updated_at": "2026-09-22T08:19:33.847Z"
+        }
+    },
+    {
+        "model": "services.orderitem",
+        "pk": 1,
+        "fields": {
+            "order": 1,
+            "service": 1,
+            "quantity": 1,
+            "unit_price": "300.00",
+            "subtotal": "300.00",
+            "created_at": "2026-09-22T08:19:29.443Z"
+        }
+    },
+    {
+        "model": "services.service",
+        "pk": 1,
+        "fields": {
+            "hotel": 1,
+            "name": "Food",
+            "description": "This is food section",
+            "category": "Restaurant",
+            "custom_category_name": null,
+            "created_at": "2026-09-22T08:17:01.795Z",
+            "updated_at": "2026-09-22T08:17:01.795Z"
+        }
+    },
+    {
+        "model": "services.subserviceitem",
+        "pk": 1,
+        "fields": {
+            "service": 1,
+            "name": "Dal Bhat",
+            "description": "",
+            "price": "300.00",
+            "is_available": true,
+            "created_at": "2026-09-22T08:17:01.797Z",
+            "updated_at": "2026-09-22T08:17:01.797Z"
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 1,
+        "fields": {
+            "action_time": "2026-09-22T07:56:10.850Z",
+            "user": [
+                "msi"
+            ],
+            "content_type": [
+                "hotels",
+                "roomcategory"
+            ],
+            "object_id": "1",
+            "object_repr": "Normal",
+            "action_flag": 1,
+            "change_message": "[{\"added\": {}}]"
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 2,
+        "fields": {
+            "action_time": "2026-09-22T07:56:31.066Z",
+            "user": [
+                "msi"
+            ],
+            "content_type": [
+                "rooms",
+                "room"
+            ],
+            "object_id": "1",
+            "object_repr": "Room object (1)",
+            "action_flag": 1,
+            "change_message": "[{\"added\": {}}]"
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 3,
+        "fields": {
+            "action_time": "2026-09-22T07:58:46.171Z",
+            "user": [
+                "msi"
+            ],
+            "content_type": [
+                "hotels",
+                "hotel"
+            ],
+            "object_id": "1",
+            "object_repr": "Kalika",
+            "action_flag": 1,
+            "change_message": "[{\"added\": {}}]"
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 4,
+        "fields": {
+            "action_time": "2026-09-22T08:07:56.534Z",
+            "user": [
+                "msi"
+            ],
+            "content_type": [
+                "bookings",
+                "booking"
+            ],
+            "object_id": "1",
+            "object_repr": "Booking object (1)",
+            "action_flag": 1,
+            "change_message": "[{\"added\": {}}]"
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 5,
+        "fields": {
+            "action_time": "2026-09-22T08:08:59.994Z",
+            "user": [
+                "msi"
+            ],
+            "content_type": [
+                "bookings",
+                "booking"
+            ],
+            "object_id": "1",
+            "object_repr": "Booking object (1)",
+            "action_flag": 2,
+            "change_message": "[{\"changed\": {\"fields\": [\"Discount\", \"Tax\"]}}]"
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 6,
+        "fields": {
+            "action_time": "2026-09-22T08:10:50.277Z",
+            "user": [
+                "msi"
+            ],
+            "content_type": [
+                "bookings",
+                "booking"
+            ],
+            "object_id": "1",
+            "object_repr": "Booking object (1)",
+            "action_flag": 2,
+            "change_message": "[{\"changed\": {\"fields\": [\"Number of guests\"]}}]"
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 7,
+        "fields": {
+            "action_time": "2026-09-22T08:11:13.499Z",
+            "user": [
+                "msi"
+            ],
+            "content_type": [
+                "bookings",
+                "booking"
+            ],
+            "object_id": "1",
+            "object_repr": "Booking object (1)",
+            "action_flag": 2,
+            "change_message": "[{\"added\": {\"name\": \"booking room\", \"object\": \"Room 10D for Booking #1\"}}]"
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 8,
+        "fields": {
+            "action_time": "2026-09-22T08:11:50.189Z",
+            "user": [
+                "msi"
+            ],
+            "content_type": [
+                "bookings",
+                "booking"
+            ],
+            "object_id": "1",
+            "object_repr": "Booking object (1)",
+            "action_flag": 2,
+            "change_message": "[]"
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 9,
+        "fields": {
+            "action_time": "2026-09-22T08:17:02.235Z",
+            "user": [
+                "msi"
+            ],
+            "content_type": [
+                "services",
+                "service"
+            ],
+            "object_id": "1",
+            "object_repr": "Food [Restaurant]",
+            "action_flag": 1,
+            "change_message": "[{\"added\": {}}, {\"added\": {\"name\": \"sub service item\", \"object\": \"Dal Bhat\"}}]"
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 10,
+        "fields": {
+            "action_time": "2026-09-22T08:19:29.446Z",
+            "user": [
+                "msi"
+            ],
+            "content_type": [
+                "services",
+                "order"
+            ],
+            "object_id": "1",
+            "object_repr": "Order #1 - Pending",
+            "action_flag": 1,
+            "change_message": "[{\"added\": {}}, {\"added\": {\"name\": \"order item\", \"object\": \"OrderItem object (1)\"}}]"
+        }
+    },
+    {
+        "model": "admin.logentry",
+        "pk": 11,
+        "fields": {
+            "action_time": "2026-09-22T08:19:33.849Z",
+            "user": [
+                "msi"
+            ],
+            "content_type": [
+                "services",
+                "order"
+            ],
+            "object_id": "1",
+            "object_repr": "Order #1 - Accepted",
+            "action_flag": 2,
+            "change_message": "[{\"changed\": {\"fields\": [\"Status\"]}}]"
+        }
+    }
+]
