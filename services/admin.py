@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.contrib import admin
+from django.db import transaction
 from django.db.models import Sum
 from .models import Order, OrderItem, Service, SubServiceItem
 
@@ -9,18 +10,19 @@ from .models import Order, OrderItem, Service, SubServiceItem
 # ==========================================
 
 class SubServiceItemInline(admin.TabularInline):
-    """Allows adding and editing menu/sub-items directly inside the parent Service."""
+    """Allows adding and editing sub-items directly inside the parent Service."""
     model = SubServiceItem
     extra = 1
     fields = ("name", "price", "is_available", "description")
 
 
 class OrderItemInline(admin.TabularInline):
-    """Allows staff to add services/items to an Order."""
+    """Allows staff to add items to an Order."""
     model = OrderItem
     extra = 1
-    fields = ("service", "quantity", "unit_price", "subtotal")
-    readonly_fields = ("subtotal",)
+    # If using updated SubServiceItem schema, name field 'item' instead of 'service'
+    fields = ("item", "quantity", "unit_price", "subtotal")
+    readonly_fields = ("unit_price", "subtotal")
 
 
 # ==========================================
@@ -32,7 +34,13 @@ class ServiceAdmin(admin.ModelAdmin):
     list_display = ("name", "hotel", "category", "custom_category_name", "items_count", "created_at")
     list_filter = ("hotel", "category")
     search_fields = ("name", "description", "custom_category_name", "hotel__name")
+    list_select_related = ("hotel",)
     inlines = [SubServiceItemInline]
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(
+            _items_count=Sum('items')
+        )
 
     @admin.display(description="Total Sub-Items")
     def items_count(self, obj):
@@ -44,6 +52,7 @@ class SubServiceItemAdmin(admin.ModelAdmin):
     list_display = ("name", "service", "price", "is_available", "created_at")
     list_filter = ("is_available", "service__hotel", "service__category")
     search_fields = ("name", "description", "service__name")
+    list_select_related = ("service", "service__hotel")
     list_editable = ("price", "is_available")
 
 
@@ -51,48 +60,57 @@ class SubServiceItemAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ("id", "booking", "status", "subtotal", "created_at", "updated_at")
     list_filter = ("status", "created_at")
-    search_fields = ("id", "booking__id", "booking__user__username")
+    search_fields = ("id", "booking__id", "booking__customer__username")
     readonly_fields = ("subtotal", "created_at", "updated_at")
+    list_select_related = ("booking", "booking__customer")
     list_editable = ("status",)
     inlines = [OrderItemInline]
 
+    @transaction.atomic
     def save_formset(self, request, form, formset, change):
         """
-        Automatically updates unit_price, line item subtotal, 
-        and order total whenever items are added/edited in Admin.
+        Handles saving, deletion, price snapshots, and total recalculations atomically.
         """
         instances = formset.save(commit=False)
-        
+
+        # 1. Handle deleted inline items first
+        for obj in formset.deleted_objects:
+            obj.delete()
+
+        # 2. Save new and modified items
         for instance in instances:
             if isinstance(instance, OrderItem):
-                # Auto-populate unit price from SubServiceItem if available, or keep existing unit_price
-                if not instance.unit_price and hasattr(instance, 'service'):
-                    # Fallback default if needed
-                    instance.unit_price = getattr(instance.service, 'price', Decimal('0.00'))
-                
-                # Calculate OrderItem subtotal
-                instance.subtotal = instance.unit_price * instance.quantity
+                # Auto-populate price snapshot from SubServiceItem
+                if not instance.unit_price and instance.item:
+                    instance.unit_price = instance.item.price
+
+                instance.subtotal = (instance.unit_price * instance.quantity).quantize(Decimal('0.01'))
                 instance.save()
 
         formset.save_m2m()
 
-        # Recalculate Order subtotal from non-deleted items
+        # 3. Recalculate Order subtotal after deletions and additions are finalized
         order = form.instance
-        order_items_total = order.items.aggregate(
-            total=Sum('subtotal')
-        )['total'] or Decimal('0.00')
+        if hasattr(order, 'update_subtotal'):
+            order.update_subtotal(save=True)
+        else:
+            order_items_total = order.items.aggregate(
+                total=Sum('subtotal')
+            )['total'] or Decimal('0.00')
+            order.subtotal = order_items_total
+            order.save()
 
-        order.subtotal = order_items_total
-        order.save()
-
-        # Trigger parent booking recalculation if update_totals is defined
-        if hasattr(order.booking, 'update_totals'):
+        # 4. Trigger parent booking recalculation if implemented
+        if hasattr(order.booking, 'recalculate_totals'):
+            order.booking.recalculate_totals(save=True)
+        elif hasattr(order.booking, 'update_totals'):
             order.booking.update_totals()
 
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ("id", "order", "service", "quantity", "unit_price", "subtotal", "created_at")
+    list_display = ("id", "order", "item", "quantity", "unit_price", "subtotal", "created_at")
     list_filter = ("created_at",)
-    search_fields = ("order__id", "service__name")
-    readonly_fields = ("subtotal", "created_at")
+    search_fields = ("order__id", "item__name")
+    list_select_related = ("order", "item")
+    readonly_fields = ("unit_price", "subtotal", "created_at")
