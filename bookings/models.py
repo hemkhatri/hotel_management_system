@@ -22,6 +22,8 @@ class Booking(models.Model):
 
     check_in = models.DateTimeField()
     check_out = models.DateTimeField()
+    check_in_status = models.BooleanField(default=False)
+    check_out_status = models.BooleanField(default=False)
 
     number_of_guests = models.PositiveIntegerField()
     status = models.CharField(
@@ -84,6 +86,11 @@ class Booking(models.Model):
         if save:
             super().save(update_fields = ['subtotal', 'total', 'updated_at'])
 
+    # Keep the method name used by service-order billing code and existing callers.
+    def recalculate_totals(self, save=True):
+        """Refresh subtotal and total; a successful save keeps booking billing in sync."""
+        return self.update_totals(save=save)
+
     def save(self, *args, **kwargs):
         self.full_clean()
         calculated_total = self.subtotal - self.discount + self.tax
@@ -117,6 +124,11 @@ class BookingRoom(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
 
     def save(self, *args, **kwargs):
+        # Reprice the room line if staff changes its room; otherwise preserve the original price snapshot.
+        if self.pk:
+            previous = type(self).objects.filter(pk=self.pk).values("room_id").first()
+            if previous and previous["room_id"] != self.room_id:
+                self.price_per_night = self.room.category.base_price
         if not self.price_per_night and self.room:
             self.price_per_night = self.room.category.base_price
         self.subtotal = (self.price_per_night * self.number_of_nights).quantize(Decimal("0.01"))

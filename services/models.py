@@ -228,8 +228,8 @@ class Order(models.Model):
         if save:
             super().save(update_fields=['subtotal', 'updated_at'])
             # Trigger total sync on parent Booking
-            if hasattr(self.booking, 'recalculate_totals'):
-                self.booking.recalculate_totals(save=True)
+            if hasattr(self.booking, 'update_totals'):
+                self.booking.update_totals(save=True)
 
     def __str__(self):
         return f"Order #{self.id} - {self.status}"

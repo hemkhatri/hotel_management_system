@@ -13,7 +13,6 @@ class Hotel(models.Model):
 
     def __str__(self):
         return self.name
-
 # Hotel Amenities
 class Amenity(models.Model):
     name = models.CharField(max_length = 100)
